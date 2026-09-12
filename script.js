@@ -18,14 +18,30 @@ const GameBoard = (function () {
     }
     // Función auxiliar para reiniciar la partida 
     function  reiniciarPartida() {
-       
         return casillas.fill("");
-    }
+    };
     // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
     return {
         getCasillas,
         colocarFicha,
         reiniciarPartida
-    }
+    };
 
 })();
+
+// Módulo 2: Factory function que crea jugadores 
+// (crear jugadores con nombre y ficha que los identifica)
+function crearJugador(nombre, ficha) {
+    // Retorna un objeto con el nombre y la ficha del jugador
+    return {
+        nombre,
+        ficha
+    };
+}
+
+// Crear jugador
+const jugador = crearJugador("Javi", "X");
+const computadora = crearJugador("Computadora", "O");
+
+
+

@@ -14,12 +14,12 @@ const GameBoard = (function () {
             return true;
         } else {
             return false;
-        }
+        };
     }
     // Función auxiliar para reiniciar la partida 
     function  reiniciarPartida() {
         return casillas.fill("");
-    };
+    }
     // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
     return {
         getCasillas,
@@ -39,9 +39,34 @@ function crearJugador(nombre, ficha) {
     };
 }
 
-// Crear jugador
-const jugador = crearJugador("Javi", "X");
-const computadora = crearJugador("Computadora", "O");
+// Módulo 3: GameController (IIFE) que controla el flujo del juego
+// (gracias a closure, las variables dentro de la IIFE no se pueden acceder desde fuera)
+const GameController = (function () {
+    // Creación de jugadores
+    const jugador = crearJugador("Javi", "X");
+    const computadora = crearJugador("Computadora", "O");
+    // Inicialización del jugador actual
+    let jugadorActual = jugador;
 
-
-
+    // Función que se expondrá al exterior
+    function jugarRonda(posicion) {
+        // Verificar si la jugada es válida
+        const JugadaValida = GameBoard.colocarFicha(posicion, jugadorActual.ficha);
+        // Si la jugada es válida, cambiar el turno
+        if (JugadaValida === true) {
+            if (jugadorActual === jugador) {
+                jugadorActual = computadora;
+            } else {
+                jugadorActual = jugador;
+            };
+        };
+        // Retornamos la jugada
+        return {
+            JugadaValida
+        };
+    }
+    // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
+    return {
+        jugarRonda
+    };
+})();

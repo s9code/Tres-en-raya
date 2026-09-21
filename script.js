@@ -112,9 +112,11 @@ const GameController = (function () {
         return false;
     }
 
+    // Función que comprueba si hay empate
     function comprobarEmpate() {
+        // Obtenemos el tablero
         const tablero = GameBoard.getCasillas();
-
+        // Comprobamos si hay empate
         if (tablero.includes("")) {
             return false;
         } else {
@@ -130,8 +132,43 @@ const GameController = (function () {
     };
 })();
 
-GameController.jugarRonda(0); // X en 0
-GameController.jugarRonda(6); // O en 6
-GameController.jugarRonda(1); // X en 1
-GameController.jugarRonda(7); // O en 7
-GameController.jugarRonda(2); // X en 2 -> ¡Debería ganar aquí!
+// ENTENDER BIEN ESTE ULTIMO MODULO //
+
+// Módulo 4: DisplayController (IIFE) que controla el flujo del juego
+// (gracias a closure, las variables dentro de la IIFE no se pueden acceder desde fuera)
+const DisplayController = (function() {
+    // Obtenemos las casillas de los div de index.html
+    const casillas = document.querySelectorAll(".casilla");
+
+    // Función que renderiza el tablero
+    function render() {
+        // Obtenemos las casillas del GameBoard
+        arrayCasillas = GameBoard.getCasillas();
+        
+        // Recorremos las casillas del GameBoard para mostrarlas en pantalla
+        arrayCasillas.forEach(function(ficha, indice) {
+            // Las casillas de index.html se actualizan con el texto de las casillas del GameBoard
+            casillas[indice].textContent = ficha;
+            
+        }); 
+    }
+
+    // Recorremos las casillas del index.html para añadirles un evento click
+    casillas.forEach(function(casilla, indice) {
+        // Añadimos el evento click a cada casilla
+        casilla.addEventListener("click", () => {
+            // Función que llama a jugarRonda de GameController para jugar una ronda
+            GameController.jugarRonda(indice);
+            // Función que llama a render de DisplayController para pintar el tablero
+            render();
+        })
+    })
+
+    // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
+        return {
+            render
+        };
+
+})();
+
+DisplayController.render();

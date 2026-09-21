@@ -1,0 +1,10 @@
+.tablero {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 10px;
+}
+
+.tablero div {
+    border: 2px solid blue;
+}

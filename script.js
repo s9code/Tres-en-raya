@@ -70,10 +70,10 @@ const GameController = (function () {
             // Primero comprobamos si con esa jugada alguien ha ganado
             if (comprobarGanador() === true) {
                 console.log("Se acabo la partida");
-
-            
+            // Si no hay ganador, comprobamos si hay empate
             } else if (comprobarEmpate() === true){
                 console.log("Empate");
+            // Si no hay empate, comprobamos si hay ganador
             } else {
                 // Si nadie ha ganado todavía, ENTONCES cambiamos el turno
                 if (jugadorActual === jugador) {
@@ -82,7 +82,6 @@ const GameController = (function () {
                     jugadorActual = jugador;
                 };
             }
-            
         };
         // Retornamos la jugada
         return {
@@ -136,4 +135,3 @@ GameController.jugarRonda(6); // O en 6
 GameController.jugarRonda(1); // X en 1
 GameController.jugarRonda(7); // O en 7
 GameController.jugarRonda(2); // X en 2 -> ¡Debería ganar aquí!
-

@@ -1,6 +1,6 @@
 // Módulo 1: GameBoard (IIFE) para que funcione de manera privada 
-// (gracias a closure, las variables dentro de la IIFE no se pueden acceder desde fuera)
 const GameBoard = (function () {
+    
     // Array que representa el tablero
     let casillas = ["", "", "", "", "", "", "", "", ""];
     // Función auxiliar para obtener las casillas 
@@ -20,17 +20,17 @@ const GameBoard = (function () {
     function  reiniciarPartida() {
         return casillas.fill("");
     }
+
     // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
     return {
         getCasillas,
         colocarFicha,
-        reiniciarPartida
+        reiniciarPartida,
     };
 
 })();
 
 // Módulo 2: Factory function que crea jugadores 
-// (crear jugadores con nombre y ficha que los identifica)
 function crearJugador(nombre, ficha) {
     // Retorna un objeto con el nombre y la ficha del jugador
     return {
@@ -40,12 +40,12 @@ function crearJugador(nombre, ficha) {
 }
 
 // Módulo 3: GameController (IIFE) que controla el flujo del juego
-// (gracias a closure, las variables dentro de la IIFE no se pueden acceder desde fuera)
 const GameController = (function () {
     // Creación de jugadores
     const jugador = crearJugador("Javi", "X");
     // creamos la variable computadora con la factoría de jugadores
     const computadora = crearJugador("Computadora", "O");
+
     // Combinaciones ganadoras
     const combinacionesGanadoras = [
         [0, 1, 2],
@@ -61,25 +61,33 @@ const GameController = (function () {
     // Inicialización del jugador actual
     let jugadorActual = jugador;
 
+    let juegoActivo = true;
+
     // Función que se expondrá al exterior
     function jugarRonda(posicion) {
+        if (juegoActivo === false) {
+            return; // Aborta la función, no deja jugar
+        }
         // Verificar si la jugada es válida
         const JugadaValida = GameBoard.colocarFicha(posicion, jugadorActual.ficha);
         // Si la jugada es válida, cambiar el turno
         if (JugadaValida === true) {
             // Primero comprobamos si con esa jugada alguien ha ganado
             if (comprobarGanador() === true) {
-                console.log("Se acabo la partida");
+                juegoActivo = false;
             // Si no hay ganador, comprobamos si hay empate
             } else if (comprobarEmpate() === true){
-                console.log("Empate");
+                DisplayController.mostrarMensaje("Empate");
+                juegoActivo = false;
             // Si no hay empate, comprobamos si hay ganador
             } else {
                 // Si nadie ha ganado todavía, ENTONCES cambiamos el turno
                 if (jugadorActual === jugador) {
                     jugadorActual = computadora;
+                    DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`);
                 } else {
                     jugadorActual = jugador;
+                    DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`);
                 };
             }
         };
@@ -103,7 +111,7 @@ const GameController = (function () {
 
             if (tablero[pos1] === tablero[pos2] && tablero[pos1] === tablero[pos3] && tablero[pos1] !== "") {
                 // Si hay tres fichas iguales en una de las combinaciones ganadoras
-                console.log("Ha ganado el jugador");
+                DisplayController.mostrarMensaje(`Ha ganado ${jugadorActual.nombre}`);
                 return true;
             }
 
@@ -125,20 +133,29 @@ const GameController = (function () {
 
     }
 
+    function reiniciarJuego() {
+        GameBoard.reiniciarPartida(); // Vaciamos el array
+        jugadorActual = jugador; // Reseteamos el turno
+        DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`) // reseteamos el texto
+        juegoActivo = true;
+    }
+
     // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
     return {
         jugarRonda,
-        comprobarGanador
+        comprobarGanador,
+        reiniciarJuego
     };
 })();
 
-// ENTENDER BIEN ESTE ULTIMO MODULO //
-
 // Módulo 4: DisplayController (IIFE) que controla el flujo del juego
-// (gracias a closure, las variables dentro de la IIFE no se pueden acceder desde fuera)
 const DisplayController = (function() {
     // Obtenemos las casillas de los div de index.html
     const casillas = document.querySelectorAll(".casilla");
+
+    const mensajePartida = document.querySelector(".mensaje-juego");
+
+    const btnReiniciar = document.querySelector("#btn-reiniciar");
 
     // Función que renderiza el tablero
     function render() {
@@ -164,11 +181,22 @@ const DisplayController = (function() {
         })
     })
 
+    function mostrarMensaje(mensaje) {
+        mensajePartida.textContent = mensaje;
+    }
+
+    btnReiniciar.addEventListener("click", () => {
+        GameController.reiniciarJuego();
+        render(); // La pantalla pinta el tablero vacío
+    })
+
     // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
         return {
-            render
+            render,
+            mostrarMensaje
         };
 
 })();
 
 DisplayController.render();
+

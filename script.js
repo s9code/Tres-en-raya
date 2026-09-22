@@ -61,12 +61,13 @@ const GameController = (function () {
     // Inicialización del jugador actual
     let jugadorActual = jugador;
 
+    // booleano para controlar si el juego está activo
     let juegoActivo = true;
 
     // Función que se expondrá al exterior
     function jugarRonda(posicion) {
         if (juegoActivo === false) {
-            return; // Aborta la función, no deja jugar
+            return; // Aborta la función, no deja jugar si hay un ganador o empate
         }
         // Verificar si la jugada es válida
         const JugadaValida = GameBoard.colocarFicha(posicion, jugadorActual.ficha);
@@ -74,20 +75,20 @@ const GameController = (function () {
         if (JugadaValida === true) {
             // Primero comprobamos si con esa jugada alguien ha ganado
             if (comprobarGanador() === true) {
-                juegoActivo = false;
+                juegoActivo = false; // Si hay un ganador, paramos el juego
             // Si no hay ganador, comprobamos si hay empate
             } else if (comprobarEmpate() === true){
                 DisplayController.mostrarMensaje("Empate");
-                juegoActivo = false;
+                juegoActivo = false; // Si hay empate, paramos el juego
             // Si no hay empate, comprobamos si hay ganador
             } else {
                 // Si nadie ha ganado todavía, ENTONCES cambiamos el turno
                 if (jugadorActual === jugador) {
                     jugadorActual = computadora;
-                    DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`);
+                    DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`); 
                 } else {
                     jugadorActual = jugador;
-                    DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`);
+                    DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`); 
                 };
             }
         };
@@ -137,7 +138,7 @@ const GameController = (function () {
         GameBoard.reiniciarPartida(); // Vaciamos el array
         jugadorActual = jugador; // Reseteamos el turno
         DisplayController.mostrarMensaje(`Es el turno de ${jugadorActual.nombre}`) // reseteamos el texto
-        juegoActivo = true;
+        juegoActivo = true; // Reiniciamos el juego
     }
 
     // Devolvemos un objeto con los métodos públicos para poder acceder a ellos desde fuera
@@ -152,9 +153,9 @@ const GameController = (function () {
 const DisplayController = (function() {
     // Obtenemos las casillas de los div de index.html
     const casillas = document.querySelectorAll(".casilla");
-
+    // Obtenemos el mensaje de la partida
     const mensajePartida = document.querySelector(".mensaje-juego");
-
+    // Obtenemos el botón de reiniciar partida
     const btnReiniciar = document.querySelector("#btn-reiniciar");
 
     // Función que renderiza el tablero
@@ -180,13 +181,13 @@ const DisplayController = (function() {
             render();
         })
     })
-
+    // Función que muestra el mensaje de la partida
     function mostrarMensaje(mensaje) {
         mensajePartida.textContent = mensaje;
     }
-
+    // Evento click del botón de reiniciar partida
     btnReiniciar.addEventListener("click", () => {
-        GameController.reiniciarJuego();
+        GameController.reiniciarJuego(); // Prepara el turno y el mensaje inicial
         render(); // La pantalla pinta el tablero vacío
     })
 
@@ -198,5 +199,6 @@ const DisplayController = (function() {
 
 })();
 
+// Llamamos a render al principio para mostrar el tablero vacío
 DisplayController.render();
 

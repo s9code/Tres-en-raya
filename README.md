@@ -18,4 +18,4 @@ Construir un juego de tres en raya interactivo en el navegador aplicando:
 
 ## 🚀 Enlace en vivo
 
-_(Próximamente)_
+https://tres-en-raya-seven.vercel.app/
